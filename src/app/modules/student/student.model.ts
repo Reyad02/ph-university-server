@@ -70,77 +70,82 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // const studentSchema = new Schema<TStudent, StudentModel, StudentMethod>({
-const studentSchema = new Schema<TStudent>({
-  id: {
-    type: String,
-    required: [true, 'Student ID is required'],
-    unique: true,
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User id is required'],
-    unique: true,
-    ref: 'User',
-  },
-  name: {
-    type: userSchema,
-    required: [true, 'Name details are required'],
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female'],
-      message: "Gender must be either 'male' or 'female'",
+const studentSchema = new Schema<TStudent>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Student ID is required'],
+      unique: true,
     },
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: {
-    type: String,
-    required: [true, 'Date of birth is required'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a correct email',
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+      unique: true,
+      ref: 'User',
+    },
+    name: {
+      type: userSchema,
+      required: [true, 'Name details are required'],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female'],
+        message: "Gender must be either 'male' or 'female'",
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of birth is required'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is not a correct email',
+      },
+    },
+    contactNo: { type: String, required: [true, 'Contact number is required'] },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
+        message: 'Invalid blood group',
+      },
+      required: [true, 'Blood group is required'],
+    },
+    presentAdd: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAdd: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian details are required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local guardian details are required'],
+    },
+    profileImg: { type: String },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  contactNo: { type: String, required: [true, 'Contact number is required'] },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
+  {
+    timestamps: true,
   },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
-      message: 'Invalid blood group',
-    },
-    required: [true, 'Blood group is required'],
-  },
-  presentAdd: {
-    type: String,
-    required: [true, 'Present address is required'],
-  },
-  permanentAdd: {
-    type: String,
-    required: [true, 'Permanent address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian details are required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local guardian details are required'],
-  },
-  profileImg: { type: String },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-});
+);
 
 export const Student = model<TStudent>('Student', studentSchema);
