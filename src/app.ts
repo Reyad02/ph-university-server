@@ -7,6 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api/v1/users', UserRouter);
+app.use('/api/v1/students', UserRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

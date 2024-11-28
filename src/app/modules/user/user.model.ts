@@ -45,6 +45,5 @@ userschema.post('save', function (doc, next) {
   next();
 });
 
-
-const User = model<TUser>("User", userschema);
+const User = model<TUser>('User', userschema);
 export default User;
