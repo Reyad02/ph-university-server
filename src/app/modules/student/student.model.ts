@@ -138,9 +138,13 @@ const studentSchema = new Schema<TStudent>(
       required: [true, 'Local guardian details are required'],
     },
     profileImg: { type: String },
-    isDeleted: {
-      type: Boolean,
-      default: false,
+    // isDeleted: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
     },
   },
   {
