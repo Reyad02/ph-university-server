@@ -1,21 +1,21 @@
 import config from '../../config';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import User from './user.model';
+import { generatedStudentId } from './user.utils';
 
 const createStudentInDB = async (password: string, student: TStudent) => {
   const user: Partial<TUser> = {};
 
-  const generateRandomUserId = () => {
-    const min = 1000000000; // Minimum 10-digit number
-    const max = 9999999999; // Maximum 10-digit number
-    return (Math.floor(Math.random() * (max - min + 1)) + min).toString();
-  };
+  const admissionSemester = await AcademicSemester.findById(
+    student.admissionSemester,
+  );
 
   user.password = password || config.default_pass;
   user.role = 'student';
-  user.id = generateRandomUserId();
+  user.id = await generatedStudentId(admissionSemester);
   user.status = 'in-progress';
 
   const newUser = await User.create(user);
