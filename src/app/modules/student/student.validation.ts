@@ -44,45 +44,51 @@ const localGuardianValidationSchema = z.object({
 });
 
 // Student schema
-const studentValidationSchema = z.object({
-  id: z.string().nonempty('Student ID is required'),
-  // password: z.string().nonempty('Password is required'),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female'], {
-    required_error: 'Gender is required',
-    invalid_type_error: "Gender must be either 'male' or 'female'",
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    // id: z.string().nonempty('Student ID is required'),
+    // password: z.string().nonempty('Password is required'),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(['male', 'female'], {
+        required_error: 'Gender is required',
+        invalid_type_error: "Gender must be either 'male' or 'female'",
+      }),
+      dateOfBirth: z
+        .string()
+        .refine((value) => !isNaN(Date.parse(value)), 'Invalid date format'),
+      email: z
+        .string()
+        .email('Invalid email address')
+        .nonempty('Email is required'),
+      contactNo: z
+        .string()
+        .regex(/^\+?\d{10,15}$/, 'Contact number is invalid')
+        .nonempty('Contact number is required'),
+      emergencyContactNo: z
+        .string()
+        .regex(/^\+?\d{10,15}$/, 'Emergency contact number is invalid')
+        .nonempty('Emergency contact number is required'),
+      bloodGroup: z.enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'], {
+        required_error: 'Blood group is required',
+        invalid_type_error: 'Invalid blood group',
+      }),
+      presentAdd: z.string().nonempty('Present address is required'),
+      permanentAdd: z.string().nonempty('Permanent address is required'),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImg: z.string().url().optional(),
+      isActive: z
+        .enum(['active', 'blocked'], {
+          required_error: 'Status is required',
+          invalid_type_error: "Status must be either 'active' or 'blocked'",
+        })
+        .default('active'),
+      isDeleted: z.boolean(),
+    }),
   }),
-  dateOfBirth: z
-    .string()
-    .refine((value) => !isNaN(Date.parse(value)), 'Invalid date format'),
-  email: z
-    .string()
-    .email('Invalid email address')
-    .nonempty('Email is required'),
-  contactNo: z
-    .string()
-    .regex(/^\+?\d{10,15}$/, 'Contact number is invalid')
-    .nonempty('Contact number is required'),
-  emergencyContactNo: z
-    .string()
-    .regex(/^\+?\d{10,15}$/, 'Emergency contact number is invalid')
-    .nonempty('Emergency contact number is required'),
-  bloodGroup: z.enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'], {
-    required_error: 'Blood group is required',
-    invalid_type_error: 'Invalid blood group',
-  }),
-  presentAdd: z.string().nonempty('Present address is required'),
-  permanentAdd: z.string().nonempty('Permanent address is required'),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  profileImg: z.string().url().optional(),
-  isActive: z
-    .enum(['active', 'blocked'], {
-      required_error: 'Status is required',
-      invalid_type_error: "Status must be either 'active' or 'blocked'",
-    })
-    .default('active'),
-  isDeleted: z.boolean(),
 });
 
-export default studentValidationSchema;
+export const studentValidationSchemas = {
+  createStudentValidationSchema,
+};
