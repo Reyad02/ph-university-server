@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import config from '../../config';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TStudent } from '../student/student.interface';
@@ -5,6 +6,7 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import User from './user.model';
 import { generatedStudentId } from './user.utils';
+import AppError from '../../errors/AppError';
 
 const createStudentInDB = async (password: string, student: TStudent) => {
   const user: Partial<TUser> = {};
@@ -15,17 +17,35 @@ const createStudentInDB = async (password: string, student: TStudent) => {
 
   user.password = password || config.default_pass;
   user.role = 'student';
-  user.id = await generatedStudentId(admissionSemester);
   user.status = 'in-progress';
 
-  const newUser = await User.create(user);
+  const session = await mongoose.startSession();
 
-  if (Object.keys(newUser).length) {
-    student.id = newUser.id;
-    student.user = newUser._id;
+  try {
+    session.startTransaction();
+    user.id = await generatedStudentId(admissionSemester);
 
-    const newStudent = await Student.create(student);
+    const newUser = await User.create([user], { session });
+
+    if (!newUser.length) {
+      throw new AppError(400, 'Failed to create user');
+    }
+
+    student.id = newUser[0].id;
+    student.user = newUser[0]._id;
+
+    const newStudent = await Student.create([student], { session });
+    if (!newStudent.length) {
+      throw new AppError(400, 'Failed to create student');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
     return newStudent;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error('Failed to create student');
   }
 };
 
