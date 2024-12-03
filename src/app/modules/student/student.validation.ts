@@ -84,8 +84,9 @@ const createStudentValidationSchema = z.object({
           invalid_type_error: "Status must be either 'active' or 'blocked'",
         })
         .default('active'),
-      // isDeleted: z.boolean(),
+      isDeleted: z.boolean().default(false),
       admissionSemester: z.string(),
+      academicDepartment: z.string(),
     }),
   }),
 });
