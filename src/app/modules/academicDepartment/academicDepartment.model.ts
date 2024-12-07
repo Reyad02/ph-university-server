@@ -4,10 +4,15 @@ import AppError from '../../errors/AppError';
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
-    name: { type: String, required: true, unique: true },
+    name: {
+      type: String,
+      required: [true, 'AcademicFaculty is required'],
+      unique: true,
+    },
     academicFaculty: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicFaculty',
+      required: [true, 'AcademicFaculty is required'],
     },
   },
   { timestamps: true },
