@@ -30,7 +30,7 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
     })),
   });
 
-  const excludeFields = ['searchTerm', 'sort', 'page'];
+  const excludeFields = ['searchTerm', 'sort', 'page', 'fields'];
   excludeFields.map((item) => delete filterObj[item]);
 
   const filterQuery = searchQuery
@@ -60,9 +60,16 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
     skip = (page - 1) * limit;
   }
 
-  const pageQuery = await sortQuery.skip(skip).limit(limit);
+  const pageQuery = sortQuery.skip(skip).limit(limit);
 
-  return pageQuery;
+  let fields = '-__v';
+  if (query?.fields) {
+    fields = (query.fields as string).split(',').join(' ');
+  }
+
+  const fieldsQuery = await pageQuery.select(fields);
+
+  return fieldsQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
