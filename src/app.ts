@@ -13,6 +13,7 @@ app.use('/api/v1', router);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
+  // Promise.reject()
 });
 
 app.use(globalErrorHandler);
