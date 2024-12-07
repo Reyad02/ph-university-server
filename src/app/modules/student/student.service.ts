@@ -5,7 +5,7 @@ import User from '../user/user.model';
 import { TStudent } from './student.interface';
 
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
-  const queryObj = { ...query };
+  const filterObj = { ...query };
   let searchTerm = '';
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
@@ -24,12 +24,18 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   //   [field]: searchTerm,
   // }));
 
-  const result = await Student.find({
+  const searchQuery = Student.find({
     $or: searchableFields.map((field) => ({
       [field]: { $regex: searchTerm, $options: 'i' },
     })),
   });
-  return result;
+
+  const excludeFields = ['searchTerm'];
+  excludeFields.map((item) => delete filterObj[item]);
+
+  const filterQuery = await searchQuery.find(filterObj);
+
+  return filterQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
