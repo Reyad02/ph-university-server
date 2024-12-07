@@ -4,8 +4,31 @@ import AppError from '../../errors/AppError';
 import User from '../user/user.model';
 import { TStudent } from './student.interface';
 
-const getAllStudentFromDB = async () => {
-  const result = await Student.find();
+const getAllStudentFromDB = async (query: Record<string, unknown>) => {
+  const queryObj = { ...query };
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const searchableFields = [
+    'name.firstName',
+    'name.middleName',
+    'name.lastName',
+    'guardian.fatherName',
+    'guardian.motherName',
+    'localGuardian.name',
+  ];
+
+  // const searchQuery = searchableFields.map((field) => ({
+  //   [field]: searchTerm,
+  // }));
+
+  const result = await Student.find({
+    $or: searchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
   return result;
 };
 
