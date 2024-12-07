@@ -30,12 +30,24 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
     })),
   });
 
-  const excludeFields = ['searchTerm'];
+  const excludeFields = ['searchTerm', 'sort'];
   excludeFields.map((item) => delete filterObj[item]);
 
-  const filterQuery = await searchQuery.find(filterObj);
+  const filterQuery = searchQuery
+    .find(filterObj)
+    .populate({
+      path: 'academicDepartment',
+      populate: { path: 'academicFaculty' },
+    })
+    .populate('admissionSemester');
 
-  return filterQuery;
+  let sortedQuery = '-createdAt';
+  if (query.sort) {
+    sortedQuery = query?.sort as string;
+  }
+  const sortQuery = await filterQuery.sort(sortedQuery);
+
+  return sortQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
