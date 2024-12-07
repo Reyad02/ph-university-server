@@ -55,5 +55,5 @@ export const StudentController = {
   getAllStudents,
   getSingleStudent,
   deleteStudent,
-  updateStudent
+  updateStudent,
 };
