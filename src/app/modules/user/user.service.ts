@@ -26,6 +26,7 @@ const createStudentInDB = async (password: string, student: TStudent) => {
   user.password = password || config.default_pass;
   user.role = 'student';
   user.status = 'in-progress';
+  user.email = student?.email;
 
   const session = await mongoose.startSession();
 
@@ -63,6 +64,8 @@ const createFacultyIntoDB = async (password: string, payload: TFcaulty) => {
   user.password = password || config.default_pass;
   user.role = 'faculty';
   user.status = 'in-progress';
+  user.email = payload?.email;
+
 
   const session = await mongoose.startSession();
 
@@ -100,6 +103,8 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   user.password = password || config.default_pass;
   user.role = 'admin';
   user.status = 'in-progress';
+  user.email = payload?.email;
+
 
   const session = await mongoose.startSession();
 
