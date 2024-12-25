@@ -2,6 +2,7 @@ import { Request, RequestHandler, Response } from 'express';
 import { UserService } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
+import httpStatus from 'http-status';
 
 const createStudent: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -61,9 +62,23 @@ const getMe: RequestHandler = catchAsync(
   },
 );
 
+const changeStatus = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await UserService.changeStatus(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Status is updated successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   createStudent,
   createFaculty,
   createAdmin,
   getMe,
+  changeStatus
 };

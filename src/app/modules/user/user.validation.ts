@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { UserStatus } from './user.constant';
 const userValidation = z.object({
   id: z.string().optional(),
   password: z
@@ -10,4 +11,12 @@ const userValidation = z.object({
   isDeleted: z.boolean().optional().default(false),
 });
 
-export default userValidation;
+const changeStatusValidationSchema = z.object({
+  body: z.object({
+    status: z.enum([...UserStatus] as [string, ...string[]]),
+  }),
+});
+export const UserValidation = {
+  userValidation,
+  changeStatusValidationSchema,
+};
