@@ -47,8 +47,23 @@ const createAdmin: RequestHandler = catchAsync(
   },
 );
 
+const getMe: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { userId, role } = req.user;
+    const result = await UserService.getMe(userId, role);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'User retrieved successfully',
+      data: result,
+    });
+  },
+);
+
 export const UserController = {
   createStudent,
   createFaculty,
   createAdmin,
+  getMe,
 };
