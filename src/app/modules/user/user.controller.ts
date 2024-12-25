@@ -6,10 +6,12 @@ import httpStatus from 'http-status';
 
 const createStudent: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    // const data = req.body;
-    // const parsedData = userValidation.parse(data);
     const { password, student } = req.body;
-    const result = await UserService.createStudentInDB(password, student);
+    const result = await UserService.createStudentInDB(
+      req.file,
+      password,
+      student,
+    );
 
     sendResponse(res, {
       statusCode: 200,
@@ -80,5 +82,5 @@ export const UserController = {
   createFaculty,
   createAdmin,
   getMe,
-  changeStatus
+  changeStatus,
 };

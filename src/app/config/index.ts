@@ -16,4 +16,7 @@ export default {
   reset_pass_ui_link:process.env.RESET_PASS_UI_LINK,
   nodemailer_email:process.env.NODEMAILER_TRANSPORT_EMAIL,
   nodemailer_pass:process.env.NODEMAILER_TRANSPORT_PASS,
+  cloudinary_cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinary_api:process.env.CLOUDINARY_API,
+  cloudinary_api_secret:process.env.CLOUDINARY_API_SECRET,
 };

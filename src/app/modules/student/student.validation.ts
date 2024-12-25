@@ -20,11 +20,11 @@ const userNameValidationSchema = z.object({
   firstName: z
     .string()
     .nonempty('First name is required')
-    .max(20, 'First name length cannot be more than 20')
-    .refine(
-      (value) => /^[A-Z][a-zA-Z]*$/.test(value),
-      'First name must start with an uppercase letter and contain only letters',
-    ),
+    .max(20, 'First name length cannot be more than 20'),
+    // .refine(
+    //   (value) => /^[A-Z][a-zA-Z]*$/.test(value),
+    //   'First name must start with an uppercase letter and contain only letters',
+    // ),
   middleName: z.string().optional(),
   lastName: z
     .string()
@@ -77,7 +77,7 @@ const createStudentValidationSchema = z.object({
       permanentAdd: z.string().nonempty('Permanent address is required'),
       guardian: guardianValidationSchema,
       localGuardian: localGuardianValidationSchema,
-      profileImg: z.string().url().optional(),
+      // profileImg: z.string().url().optional(),
       isActive: z
         .enum(['active', 'blocked'], {
           required_error: 'Status is required',

@@ -15,8 +15,13 @@ import { TFcaulty } from '../faculty/faculty.interface';
 import { Faculty } from '../faculty/faculty.model';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-const createStudentInDB = async (password: string, student: TStudent) => {
+const createStudentInDB = async (
+  file: any,
+  password: string,
+  student: TStudent,
+) => {
   const user: Partial<TUser> = {};
 
   const admissionSemester = await AcademicSemester.findById(
@@ -34,6 +39,9 @@ const createStudentInDB = async (password: string, student: TStudent) => {
     session.startTransaction();
     user.id = await generatedStudentId(admissionSemester);
 
+    const imageName = `${user.id}${student?.name?.firstName}`;
+    const {secure_url} = await sendImageToCloudinary(imageName, file.path );
+
     const newUser = await User.create([user], { session });
 
     if (!newUser.length) {
@@ -42,6 +50,7 @@ const createStudentInDB = async (password: string, student: TStudent) => {
 
     student.id = newUser[0].id;
     student.user = newUser[0]._id;
+    student.profileImg = secure_url
 
     const newStudent = await Student.create([student], { session });
     if (!newStudent.length) {
@@ -164,5 +173,5 @@ export const UserService = {
   createFacultyIntoDB,
   createAdminIntoDB,
   getMe,
-  changeStatus
+  changeStatus,
 };
