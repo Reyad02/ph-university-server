@@ -16,6 +16,7 @@ import { Faculty } from '../faculty/faculty.model';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
+import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 
 const createStudentInDB = async (
   file: any,
@@ -28,6 +29,20 @@ const createStudentInDB = async (
     student.admissionSemester,
   );
 
+  if (!admissionSemester) {
+    throw new AppError(400, 'Admission semester not found');
+  }
+
+   // find department
+   const academicDepartment = await AcademicDepartment.findById(
+    student.academicDepartment,
+  );
+
+  if (!academicDepartment) {
+    throw new AppError(400, 'Academic department not found');
+  }
+  student.academicFaculty = academicDepartment.academicFaculty;
+
   user.password = password || config.default_pass;
   user.role = 'student';
   user.status = 'in-progress';
@@ -39,8 +54,12 @@ const createStudentInDB = async (
     session.startTransaction();
     user.id = await generatedStudentId(admissionSemester);
 
-    const imageName = `${user.id}${student?.name?.firstName}`;
-    const {secure_url} = await sendImageToCloudinary(imageName, file.path );
+    if(file){
+      const imageName = `${user.id}${student?.name?.firstName}`;
+      const {secure_url} = await sendImageToCloudinary(imageName, file.path );
+      student.profileImg = secure_url
+    }
+   
 
     const newUser = await User.create([user], { session });
 
@@ -50,7 +69,6 @@ const createStudentInDB = async (
 
     student.id = newUser[0].id;
     student.user = newUser[0]._id;
-    student.profileImg = secure_url
 
     const newStudent = await Student.create([student], { session });
     if (!newStudent.length) {

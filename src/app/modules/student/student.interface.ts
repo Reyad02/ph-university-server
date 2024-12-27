@@ -41,4 +41,5 @@ export type TStudent = {
   isDeleted: boolean;
   admissionSemester: Types.ObjectId;
   academicDepartment: Types.ObjectId;
+  academicFaculty: Types.ObjectId;
 };
